@@ -15,8 +15,8 @@ cat_recognition/models/*.keras
 *.pth
 *.ckpt
 /checkpoint/
-class_names_v3.npy
-class_names.npy
+cat_recognition/models/class_names_v3.npy
+cat_recognition/models/class_names.npy
 
 # Historial de predicciones (datos locales)
 cat_recognition/historial/
