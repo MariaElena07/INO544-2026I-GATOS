@@ -51,7 +51,7 @@ var/
 # Imágenes temporales y capturas
 *.jpg
 *.jpeg
-# *.png
+*.png
 *.bmp
 *.gif
 !cat_recognition/static/**
