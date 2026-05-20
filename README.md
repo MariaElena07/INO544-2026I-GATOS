@@ -67,7 +67,7 @@ La tasa de aprendizaje se eligió estratégicamente según cada fase del entrena
 - **Precisión final (Accuracy) en data de test:** 94.32%
 - **Pérdida final (Loss) en data de test:** 0.2378
 
-![Gráfica de Entrenamiento Final](cat_recognition\models\curvas_v4.png)
+<img width="1400" height="500" alt="curvas_v4" src="https://github.com/user-attachments/assets/d2023b2d-f816-4159-897c-2f614d4e2b4f" />
 
 ---
 
@@ -76,45 +76,46 @@ La tasa de aprendizaje se eligió estratégicamente según cada fase del entrena
 El rendimiento final se logró tras un proceso iterativo de experimentación. Haz clic en cada versión para desplegar su descripción y gráfica de entrenamiento correspondientes:
 
 <details>
-<summary><b>📊 Versión 1 — Modelo Base Convencional (Precisión: ~82%)</b></summary>
+<summary><b>📊 Versión 1 — Modelo Base Convencional (Precisión: 80,5%)</b></summary>
 <p>
 
 Se entrenó la red base congelada conectada a una capa densa simple de salida. El modelo mostró un aprendizaje rápido pero con un techo de precisión bajo debido a la falta de capas intermedias para procesar las 13 clases de forma óptima.
 
-![Gráfica Versión 1](cat_recognition\models\curvas_v1.png)
+<img width="1400" height="500" alt="curvas_v1" src="https://github.com/user-attachments/assets/bdb9f46e-17e5-43e0-9d02-4adbed81c202" />
 
 </p>
 </details>
 
 <details>
-<summary><b>📊 Versión 2 — Rediseño de la Cabeza de Clasificación (Aumento de Precisión)</b></summary>
+<summary><b>📊 Versión 2 — Rediseño de la Cabeza de Clasificación (Precisión: 88,6%)</b></summary>
 <p>
 
 Se expandió la arquitectura añadiendo bloques densos más complejos (`Dense 256` y `Dense 128`). La precisión aumentó significativamente, pero las curvas de entrenamiento y validación comenzaron a separarse, mostrando los primeros síntomas de sobreentrenamiento (*overfitting*).
 
-![Gráfica Versión 2](cat_recognition\models\curvas_v2.png)
+<img width="1400" height="500" alt="curvas_v2" src="https://github.com/user-attachments/assets/8155d8e3-a9fc-4b80-9c8f-60b5fff7a338" />
 
 </p>
 </details>
 
 <details>
-<summary><b>📊 Versión 3 — Control de Overfitting (Curvas Estabilizadas)</b></summary>
+<summary><b>📊 Versión 3 — Control de Overfitting (Precisión: 91,0%)</b></summary>
 <p>
 
 Se integraron capas de `Dropout` (0.5 y 0.3) junto con `BatchNormalization` y aumento de datos (*Data Augmentation*) en tiempo real. Esta versión estabilizó por completo las curvas de pérdida, asegurando que el modelo aprendiera características generales y no memorizara las imágenes.
 
-![Gráfica Versión 3](cat_recognition\models\curvas_v4.png)
+<img width="1400" height="500" alt="curvas_v3" src="https://github.com/user-attachments/assets/02f42dea-6e86-4792-866f-5c2d8ede0eba" />
+
 
 </p>
 </details>
 
 <details>
-<summary><b>📊 Versión 4 — Ajuste Fino Definitivo (Fine-Tuning Final: 94.32%)</b></summary>
+<summary><b>📊 Versión 4 — Ajuste Fino Definitivo (Precisión: 94.32%)</b></summary>
 <p>
 
 Partiendo de la estabilidad de la V3, se descongelaron las últimas 30 capas del extractor y se aplicó un entrenamiento de alta precisión con una tasa de aprendizaje ultra baja ($3 \times 10^{-6}$). Esta configuración permitió especializar la red en los rasgos finos de las razas de gatos, logrando el resultado definitivo.
 
-![Gráfica Versión 4](src/curvas_final.png)
+<img width="1400" height="500" alt="curvas_v4" src="https://github.com/user-attachments/assets/d2023b2d-f816-4159-897c-2f614d4e2b4f" />
 
 </p>
 </details>
