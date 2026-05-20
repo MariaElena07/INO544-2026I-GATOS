@@ -26,14 +26,14 @@
 ## 📊 2. Gestión del Dataset (Ingeniería de Datos)
 
 - **Cantidad de imágenes originales recopiladas:** Oxford-IIIT Pet Dataset — 12 razas de gatos, 200 imágenes por raza.
-- **Cantidad de imágenes originales recopiladas:** [AGREGAR TOTAL DESPUÉS DEL ENTRENAMIENTO]
+- **Cantidad de imágenes originales recopiladas:** 11.638
 - **Estrategia de Data Augmentation aplicada:**
   - *Volteo Horizontal:* Aplicado a todas las imágenes de entrenamiento
   - *Rotación:* Rango de -20° a +20°
   - *Zoom:* 20%
   - *Desplazamiento (Width/Height Shift):* 10% lateral y vertical
   - *Cambio de Brillo:* Rango de 0.8 a 1.2
--**Total de imágenes generadas para el entrenamiento:** 8,608
+-**Total de imágenes generadas para el entrenamiento:** 8.608
 - **Resolución y formato estandarizado:** 224×224 píxeles, RGB, float32 — Tensor: `[1, 224, 224, 3]`
 - **Split:** 80% entrenamiento / 20% prueba
 
