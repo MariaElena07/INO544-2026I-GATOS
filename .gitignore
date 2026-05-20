@@ -17,6 +17,8 @@ cat_recognition/models/*.keras
 /checkpoint/
 cat_recognition/models/class_names_v3.npy
 cat_recognition/models/class_names.npy
+cat_recognition/models/arquitectura.json
+cat_recognition/models/class_names_v4.npy
 
 # Historial de predicciones (datos locales)
 cat_recognition/historial/
@@ -49,7 +51,7 @@ var/
 # Imágenes temporales y capturas
 *.jpg
 *.jpeg
-*.png
+# *.png
 *.bmp
 *.gif
 !cat_recognition/static/**
@@ -80,4 +82,3 @@ desktop.ini
 # --- EXCEPCIÓN: El modelo ONNX final SÍ debe subirse ---
 !/models/
 !/models/*.onnx
-!/models/*.npy
