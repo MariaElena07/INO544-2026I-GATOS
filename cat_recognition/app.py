@@ -62,9 +62,7 @@ def predecir(imagen_pil):
     conf_top = float(probs[idx_top])
     clase    = class_names[idx_top]
 
-    # --- LÍNEA DE DEBUG: Mira tu terminal cuando subas la moto ---
     print(f"DEBUG: Clase ganadora='{clase}' con {conf_top*100:.1f}%")
-    # -------------------------------------------------------------
 
     top3_idx = np.argsort(probs)[::-1][:3]
     top3 = [
@@ -72,7 +70,21 @@ def predecir(imagen_pil):
         for i in top3_idx
     ]
 
-    # 1. SI LA CLASE GANADORA ES "no_gato"
+    idx_nogato  = class_names.index('no_gato')
+    conf_nogato = float(probs[idx_nogato])
+
+    print(f"DEBUG: conf_nogato={conf_nogato*100:.1f}%")
+
+    # Regla principal — si no_gato >= 10% → no es gato
+    if conf_nogato >= 0.10:
+        return {
+            'tipo': 'no_gato',
+            'raza': 'No es un gato',
+            'confianza': round(conf_nogato * 100, 1),
+            'top3': top3
+        }
+
+    # Clase ganadora es no_gato
     if clase == 'no_gato':
         return {
             'tipo': 'no_gato',
@@ -81,8 +93,8 @@ def predecir(imagen_pil):
             'top3': top3
         }
 
-    # 2. SI ES UN GATO Y SUPERA EL UMBRAL
-    if conf_top >= UMBRAL:
+    # Raza pura con 90%+
+    if conf_top >= 0.90:
         return {
             'tipo': 'raza_pura',
             'raza': clase,
@@ -90,12 +102,13 @@ def predecir(imagen_pil):
             'top3': top3
         }
 
-    # 3. SI ES UN GATO PERO NO ESTÁ SEGURO (MESTIZO)
+    # Mestizo — entre 10% y 90%
+    top3_razas = [t for t in top3 if t['raza'] != 'no_gato']
     return {
         'tipo': 'mestizo',
         'raza': 'Mestizo',
         'confianza': round(conf_top * 100, 1),
-        'nota': f"Podría tener rasgos de {top3[0]['raza']} y {top3[1]['raza']}",
+        'nota': f"Podría tener rasgos de {top3_razas[0]['raza']} y {top3_razas[1]['raza']}",
         'top3': top3
     }
 
@@ -200,32 +213,22 @@ def ruta_historial():
 
 @app.route('/camara_predecir', methods=['POST'])
 def ruta_camara():
-    """Recibe un frame de la cámara en base64 y predice."""
     data = request.get_json()
     if not data or 'frame' not in data:
         return jsonify({'error': 'No se recibió frame'}), 400
 
     try:
-        # Decodificar base64
         img_data   = base64.b64decode(data['frame'].split(',')[1])
         imagen_pil = Image.open(io.BytesIO(img_data)).convert('RGB')
 
-        hay_gato, boxes = detectar_gato_opencv(imagen_pil)
+        resultado = predecir(imagen_pil)
 
+        hay_gato, boxes = detectar_gato_opencv(imagen_pil)
         if hay_gato and len(boxes) > 0:
             x, y, w, h = boxes[0]
-            margen = 20
-            x0 = max(0, x - margen)
-            y0 = max(0, y - margen)
-            x1 = min(imagen_pil.width,  x + w + margen)
-            y1 = min(imagen_pil.height, y + h + margen)
-            imagen_recortada = imagen_pil.crop((x0, y0, x1, y1))
-            resultado = predecir(imagen_recortada)
             resultado['box'] = {'x': int(x), 'y': int(y), 'w': int(w), 'h': int(h)}
-        else:
-            resultado = {'tipo': 'sin_gato', 'raza': None, 'confianza': 0, 'top3': []}
 
-        resultado['gato_detectado'] = bool(hay_gato)
+        resultado['gato_detectado'] = True  # siempre mostrar resultado
         return jsonify(resultado)
 
     except Exception as e:

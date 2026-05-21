@@ -716,6 +716,7 @@ let streamCamara   = null;
 let intervaloAnali = null;
 let contDetec      = 0;
 let camaraActual   = 'user';
+let peticionEnCurso = false;
 const isMobile     = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
 
 async function iniciarCamara(facingMode) {
@@ -735,7 +736,7 @@ async function iniciarCamara(facingMode) {
     document.getElementById('stat-modo').textContent   = 'Analizando';
     if (isMobile) document.getElementById('btn-flip').classList.add('visible');
     if (intervaloAnali) clearInterval(intervaloAnali);
-    intervaloAnali = setInterval(analizarFrame, 1200);
+    intervaloAnali = setInterval(analizarFrame, 300);
   } catch(e) {
     await popupError('No se pudo acceder a la cámara: ' + e.message);
   }
@@ -747,22 +748,32 @@ function flipCamara() {
 }
 
 async function analizarFrame() {
+  if (peticionEnCurso) return; 
+
   const video  = document.getElementById('camara-video');
   const canvas = document.getElementById('camara-canvas');
   if (!video.videoWidth) return;
-  canvas.width  = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
-  const frameB64 = canvas.toDataURL('image/jpeg', 0.8);
+
+  canvas.width  = 224;
+  canvas.height = 224;
+  canvas.getContext('2d').drawImage(video, 0, 0, 224, 224);
+
+  const frameB64 = canvas.toDataURL('image/jpeg', 0.5);
+
+  peticionEnCurso = true;
   try {
     const res  = await fetch('/camara_predecir', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({frame: frameB64})
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ frame: frameB64 })
     });
     const data = await res.json();
     mostrarResultadoCamara(data);
     dibujarBox(data);
   } catch(e) { /* silencioso */ }
+  finally {
+    peticionEnCurso = false; 
+  }
 }
 
 function mostrarResultadoCamara(data) {
